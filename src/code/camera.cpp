@@ -27,14 +27,36 @@ glm::mat4 Camera::getViewMatrix() {
     return glm::lookAt(position, position + direction, CAMERA_UP);
 }
 
+bool Camera::isLookingAt(Character *character) {
+    Ellipsoid el = character->getEllipsoid();
+    glm::vec3 v = position - el.center;
+    float q = glm::dot(direction, el.scale*direction);
+    float r = glm::dot(v, el.scale*direction);
+    float u = glm::dot(direction, el.scale*v);
+    float w = glm::dot(v, el.scale*v);
+    
+    float s = (r+u)*(r+u) - 4*q*(w - 1);
+    
+    if(s < 0)
+        return false;
+    
+    float t1 = (-2*r - 2*u + sqrtf(s))/(2*q);
+    float t2 = (-2*r - 2*u + sqrtf(s))/(2*q);
+    
+    if(t1 > 0 && t2 > 0)
+        return true;
+    
+    return false;
+}
+
 void Camera::_handleMouse() {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     
-    if(CAMERA_FIRST_MOVE) {
+    if(firstMove) {
         CAMERA_LAST_X = xpos;
         CAMERA_LAST_Y = ypos;
-        CAMERA_FIRST_MOVE = false;
+        firstMove = false;
     }
     
     _calculateDirection(xpos - CAMERA_LAST_X, CAMERA_LAST_Y - ypos);
@@ -75,6 +97,8 @@ void Camera::_calculateDirection(double xoffset, double yoffset) {
     direction.x = cos(glm::radians(_yaw))*cos(glm::radians(_pitch));
     direction.y = sin(glm::radians(_pitch));
     direction.z = sin(glm::radians(_yaw))*cos(glm::radians(_pitch));
+    
+    direction = glm::normalize(direction);
 }
 
 void Camera::_handleScroll(double y) {

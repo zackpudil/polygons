@@ -1,5 +1,6 @@
 #pragma once
 
+#include <character.hpp>
 #include <main.hpp>
 #include <GLFW/glfw3.h>
 
@@ -13,22 +14,24 @@ public:
     
     GLFWwindow *window;
     
-    float speed = 5.0f;
+    float speed = 1.0f;
     float sensitivity = 0.1f;
     
     float fov = 45.0f;
+   
+    bool firstMove = true;
     
-    Camera(glm::vec3, glm::vec3, GLFWwindow*, float = 10.0f, float = 0.1f);
+    Camera(glm::vec3, glm::vec3, GLFWwindow*, float = 300.0f, float = 0.1f);
     
     void handleInput();
     
     glm::mat4 getViewMatrix();
     
+    bool isLookingAt(Character *);
+    
 private:
     double CAMERA_LAST_X = 0;
     double CAMERA_LAST_Y = 0;
-    bool CAMERA_FIRST_MOVE = true;
-    
     static bool _scrollCallbackSet;
     
     const glm::vec3 CAMERA_UP = glm::vec3(0.0f, 1.0f, 0.0f);
