@@ -1,6 +1,7 @@
 # polygons
 
 Small simple game engine utilizing OpenGL
+![](https://github.com/zackpudil/polygons/raw/master/screenshot.png)
 
 ## Building and Running
 
